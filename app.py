@@ -53,5 +53,5 @@ def create_photo():
     #     return False
 
     # #TODO add file location to DB
-    print("request files is!!!!!: ", request.files)
+    print("requet.files['file'] is!!!!!: ", request.files)
     return "Hello"
