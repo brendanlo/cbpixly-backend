@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import os
 import boto3
@@ -38,19 +38,20 @@ def create_photo():
         :return: True if file was uploaded, else False
     """
 
-    # set input values for file upload
-    file = request.files['file']
-    file_name = secure_filename(file.filename)
-    if object_name is None:
-        object_name = os.path.basename(file_name)
-    #TODO add metadata here
+  
+    # file = request.files['file']
+    # file_name = secure_filename(file.filename)
+    # if object_name is None:
+    #     object_name = os.path.basename(file_name)
+    # #TODO add metadata here
 
-    s3_client = boto3.client('s3')
-    try:
-        response = s3_client.upload_file(file_name, BUCKET_NAME, object_name)
-    except ClientError as e:
-        logging.error(e)
-        return False
+    # s3_client = boto3.client('s3')
+    # try:
+    #     response = s3_client.upload_file(file_name, BUCKET_NAME, object_name)
+    # except ClientError as e:
+    #     logging.error(e)
+    #     return False
 
-    #TODO add file location to DB
-    return True
+    # #TODO add file location to DB
+    print("request files is!!!!!: ", request.files)
+    return "Hello"
