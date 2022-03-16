@@ -11,7 +11,6 @@ class Photo(db.Model):
         )
     title = db.Column(
         db.String(100),
-        db.CheckConstraint('len(title)>=3'),
         nullable=False
         )
     description = db.Column(
@@ -43,11 +42,11 @@ class Photo(db.Model):
     )
     created_at = db.Column(
         db.DateTime,
-        nullable=False
+        nullable=False,
         default=db.func.now
         )
 
-    class serialize(self):
+    def serialize(self):
         """Serialize to dictionary"""
 
         return {
@@ -61,5 +60,16 @@ class Photo(db.Model):
             "image_url":self.image_url,
             "created_at":self.created_at
         }
+
+
+
+def connect_db(app):
+    """Connect this database to provided Flask app.
+
+    You should call this in your Flask app.
+    """
+
+    db.app = app
+    db.init_app(app)
     
     

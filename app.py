@@ -17,7 +17,7 @@ connect_db(app)
 db.create_all()
 
 
-@app.get("/photos")
+@app.get("/api/photos")
 def get_all_photos():
     """Get all photos"""
 
@@ -26,7 +26,7 @@ def get_all_photos():
     return jsonify(photos=serialized)
 
 
-@app.post("/photos")
+@app.post("/api/photos")
 def create_photo():
     """Add new photo
        
