@@ -10,7 +10,7 @@ app.config["SECRET_KEY"]= os.environ["SECRET_KEY"]
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///pixly"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-bucket_name=os.environ["BUCKET_NAME"]
+BUCKET_NAME=os.environ["BUCKET_NAME"]
 s3 = boto3.client('s3')
 
 connect_db(app)
@@ -28,14 +28,25 @@ def get_all_photos():
 
 @app.post("/photos")
 def create_photo():
-    """Add new photo"""
+    """Add new photo
+       
+        :param file_name: File to upload
+        :param bucket: Bucket to upload to
+        :param object_name: S3 object name. If not specified then file_name is used
+        :return: True if file was uploaded, else False
+    """
     
-    
-    data = open('test.jpg', 'rb')
+    # set input values for file upload
+    file = request.files['file']
+    file_name = secure_filename(file.filename)
+    if object_name is None:
+        object_name = os.path.basename(file_name)
+    #TODO add metadata here
 
-    # upload to s3 bucket
-    # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html
-
-
-
-    return 
+    s3_client = boto3.client('s3')
+    try:
+        response = s3_client.upload_file(file_name, BUCKET_NAME, object_name)
+    except ClientError as e:
+        logging.error(e)
+        return False
+    return True
