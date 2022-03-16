@@ -51,7 +51,9 @@ def create_photo():
     # except ClientError as e:
     #     logging.error(e)
     #     return False
-
+    breakpoint()
     # #TODO add file location to DB
-    print("requet.files['file'] is!!!!!: ", request.files)
+    print("requet.files['file'] is!!!!!: ", request.files['file'])
+    print("request is: ", request)
+    
     return "Hello"
