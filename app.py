@@ -1,10 +1,12 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 import os
 import boto3
-from models import db, connect_db
+from models import db, connect_db, Photo
 
 
 app = Flask(__name__)
+CORS(app)
 app.config["SECRET_KEY"]= os.environ["SECRET_KEY"]
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///pixly"
@@ -35,7 +37,7 @@ def create_photo():
         :param object_name: S3 object name. If not specified then file_name is used
         :return: True if file was uploaded, else False
     """
-    
+
     # set input values for file upload
     file = request.files['file']
     file_name = secure_filename(file.filename)
@@ -49,4 +51,6 @@ def create_photo():
     except ClientError as e:
         logging.error(e)
         return False
+
+    #TODO add file location to DB
     return True
