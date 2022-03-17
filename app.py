@@ -6,6 +6,8 @@ from models import db, connect_db, Photo
 from werkzeug.utils import secure_filename
 from botocore.exceptions import ClientError
 import requests
+from PIL import Image
+from PIL.ExifTags import TAGS
 
 
 
@@ -52,6 +54,16 @@ def create_photo():
     file_name = secure_filename(new_file.filename)
     object_name = os.path.basename(file_name)
     form_data = request.form
+
+    #get exif data
+    img = Image.open(new_file)
+    exif_table={}
+    for k, v in img.getexif().items():
+        tag=TAGS.get(k)
+        exif_table[tag]=v
+
+    print("exif data: ", exif_table)
+    
    
     # #TODO add metadata here
 
@@ -75,11 +87,12 @@ def create_photo():
             title=form_data['title'],
             description=form_data['description'],
             tags=form_data['tags'],
-            device_make="",
-            device_model="",
-            dimensions="",
+            device_make=exif_table['Make'] or "unknown",
+            device_model=exif_table['Model'] or "unknown",
+            dimensions=f'{img.width}x{img.height}' or "unknown",
             image_url=object_name
         )
+        print("new_photo: ", new_photo)
 
         db.session.add(new_photo)
         db.session.commit()
