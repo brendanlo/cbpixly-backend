@@ -37,7 +37,7 @@ class Photo(db.Model):
         default='unknown'
     )
     image_url = db.Column(
-        db.String(200),
+        db.String(500),
         nullable=False
     )
     created_at = db.Column(

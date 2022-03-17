@@ -5,6 +5,7 @@ import boto3
 from models import db, connect_db, Photo
 from werkzeug.utils import secure_filename
 from botocore.exceptions import ClientError
+import requests
 
 
 
@@ -56,17 +57,20 @@ def create_photo():
 
     # breakpoint()
     try:
-        # response = s3.upload_fileobj(new_file, BUCKET_NAME, object_name, ExtraArgs= {
-        #     'ContentDisposition': 'inline',
-        #     'ContentType': new_file.mimetype})
+        response = s3.upload_fileobj(new_file, BUCKET_NAME, object_name, ExtraArgs= {
+            'ContentDisposition': 'inline',
+            'ContentType': new_file.mimetype})
         file_url = s3.generate_presigned_url(
-                ClientMethod="put_object",
+                ClientMethod="get_object",
                 Params={
-                    "Body":new_file,
+                    # "Body":new_file,
                     "Bucket":BUCKET_NAME,
                     "Key":object_name,
-                    'ContentDisposition': 'inline',
-                    'ContentType': new_file.mimetype})
+                    # 'ContentDisposition': 'inline',
+                    # 'ContentType': new_file.mimetype
+                    })
+        # response = requests.put(file_url, data=new_file)
+        print("file url is: ",file_url)
         new_photo = Photo(
             title=form_data['title'],
             description=form_data['description'],
@@ -74,13 +78,13 @@ def create_photo():
             device_make="",
             device_model="",
             dimensions="",
-            image_url=file_url
+            image_url=object_name
         )
 
         db.session.add(new_photo)
         db.session.commit()
 
-        breakpoint()
+        
         # find the AWS URL > DB
     except ClientError as e:
         logging.error(e)
@@ -88,3 +92,20 @@ def create_photo():
     print("request.files['file'] is: ", request.files['file'])
     
     return "Hello"
+
+
+@app.get("/api/photos/imageurl")
+def get_photo_url():
+    print(request.args)
+    file_url = s3.generate_presigned_url(
+                ClientMethod="get_object",
+                Params={
+                    # "Body":new_file,
+                    "Bucket":BUCKET_NAME,
+                    "Key":request.args["key"]
+                    # 'ContentDisposition': 'inline',
+                    # 'ContentType': new_file.mimetype
+                    })
+
+    return file_url
+    
