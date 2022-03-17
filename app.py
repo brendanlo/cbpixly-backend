@@ -84,7 +84,6 @@ def create_photo():
         # find the AWS URL > DB
     except ClientError as e:
         logging.error(e)
-        print(logging)
         return False
     print("request.files['file'] is: ", request.files['file'])
     
