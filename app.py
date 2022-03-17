@@ -50,13 +50,15 @@ def create_photo():
     new_file = request.files['file']
     file_name = secure_filename(new_file.filename)
     object_name = os.path.basename(file_name)
+   
     # #TODO add metadata here
 
     # breakpoint()
     try:
-        response = s3.upload_fileobj(new_file, BUCKET_NAME, object_name)
+        response = s3.upload_fileobj(new_file, BUCKET_NAME, object_name, ExtraArgs= {
+            'ContentDisposition': 'inline',
+            'ContentType': new_file.mimetype})
         # find the AWS URL > DB
-        breakpoint()
     except ClientError as e:
         logging.error(e)
         return False
