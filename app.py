@@ -61,35 +61,54 @@ def create_photo():
     for k, v in img.getexif().items():
         tag=TAGS.get(k)
         exif_table[tag]=v
-
+    new_file.seek(0)
     print("exif data: ", exif_table)
     
    
     # #TODO add metadata here
 
     # breakpoint()
+    device_make = "unknown"
+    device_model = "unknown"
+    dimensions = "unknown"
+
+    try:
+        device_make = exif_table['Make']
+    except:
+        device_make = "unknown"
+
+    try:
+        device_model = exif_table['Model']
+    except:
+        device_model = "unknown"
+
+    try:
+        dimensions = f'{img.width}x{img.height}'
+    except:
+        dimensions = "unknown"
+    
     try:
         response = s3.upload_fileobj(new_file, BUCKET_NAME, object_name, ExtraArgs= {
             'ContentDisposition': 'inline',
             'ContentType': new_file.mimetype})
-        file_url = s3.generate_presigned_url(
-                ClientMethod="get_object",
-                Params={
-                    # "Body":new_file,
-                    "Bucket":BUCKET_NAME,
-                    "Key":object_name,
-                    # 'ContentDisposition': 'inline',
-                    # 'ContentType': new_file.mimetype
-                    })
-        # response = requests.put(file_url, data=new_file)
-        print("file url is: ",file_url)
+        # file_url = s3.generate_presigned_url(
+        #         ClientMethod="get_object",
+        #         Params={
+        #             # "Body":new_file,
+        #             "Bucket":BUCKET_NAME,
+        #             "Key":object_name,
+        #             # 'ContentDisposition': 'inline',
+        #             # 'ContentType': new_file.mimetype
+        #             })
+        # # response = requests.put(file_url, data=new_file)
+
         new_photo = Photo(
             title=form_data['title'],
             description=form_data['description'],
             tags=form_data['tags'],
-            device_make=exif_table['Make'] or "unknown",
-            device_model=exif_table['Model'] or "unknown",
-            dimensions=f'{img.width}x{img.height}' or "unknown",
+            device_make=device_make,
+            device_model=device_model,
+            dimensions=dimensions,
             image_url=object_name
         )
         print("new_photo: ", new_photo)
@@ -97,7 +116,7 @@ def create_photo():
         db.session.add(new_photo)
         db.session.commit()
 
-        
+    
         # find the AWS URL > DB
     except ClientError as e:
         logging.error(e)
