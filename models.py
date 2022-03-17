@@ -43,7 +43,7 @@ class Photo(db.Model):
     created_at = db.Column(
         db.DateTime,
         nullable=False,
-        default=db.func.now
+        default=db.func.now()
         )
 
     def serialize(self):
