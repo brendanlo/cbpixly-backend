@@ -143,7 +143,10 @@ def get_photo_url():
 @app.get("/api/photos/search")
 def search_photos():
     [ make, model ] = request.args
+
     searched_photos = Photo.query.filter(Photo.device_make.ilike(f"%{make.lower()}%")).filter(Photo.device_model.ilike(f"%{model.lower()}%"))
+
+    return searched_photos
 
     
     
