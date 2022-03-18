@@ -55,7 +55,7 @@ class Photo(db.Model):
             "title":self.title,
             "description":self.description,
             "tags":self.tags,
-            "device_name":self.device_name,
+            "device_model":self.device_model,
             "device_make":self.device_make,
             "dimensions":self.dimensions,
             "image_url":self.image_url,

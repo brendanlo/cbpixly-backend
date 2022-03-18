@@ -65,8 +65,6 @@ def create_photo():
     print("exif data: ", exif_table)
     
    
-    # #TODO add metadata here
-
     # breakpoint()
     device_make = "unknown"
     device_model = "unknown"
