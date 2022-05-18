@@ -61,7 +61,7 @@ def create_photo():
     for k, v in img.getexif().items():
         tag=TAGS.get(k)
         exif_table[tag]=v
-    new_file.seek(0)
+    new_file.seek(0) #reset file after manipulating
     print("exif data: ", exif_table)
     
    
@@ -117,8 +117,8 @@ def create_photo():
     
         # find the AWS URL > DB
     except ClientError as e:
-        logging.error(e)
-        return False
+        print(e)
+        # return False
     print("request.files['file'] is: ", request.files['file'])
     
     return "Hello"
